@@ -1,4 +1,5 @@
-import 'package:hive/hive.dart';
+// import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:vitalflow/app/constants/hive_table_constant.dart';
 import 'package:vitalflow/features/auth/data/model/auth_hive_model.dart';
@@ -32,7 +33,7 @@ class HiveService {
   }
 
   // Login using username and password
-  Future<AuthHiveModel?> login(String username, String password) async {
+  Future<AuthHiveModel?> login(String email, String password) async {
     // var box = await Hive.openBox<AuthHiveModel>(HiveTableConstant.studentBox);
     // var auth = box.values.firstWhere(
     //     (element) =>
@@ -42,7 +43,7 @@ class HiveService {
 
     var box = await Hive.openBox<AuthHiveModel>(HiveTableConstant.userBox);
     var user = box.values.firstWhere(
-        (element) => element.email == username && element.password == password);
+        (element) => element.email == email && element.password == password);
     box.close();
     return user;
   }
