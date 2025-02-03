@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:vitalflow/core/error/failure.dart';
 import 'package:vitalflow/features/auth/data/data_source/local_datasource.dart/auth_local_datasource.dart';
@@ -41,8 +43,10 @@ class AuthLocalRepository implements IAuthRepoitory {
     }
   }
 
-  // @override
-  // Future<Either<Failure, String>> uploadProfilePicture(File file) async {
-  //   throw UnimplementedError();
-  // }
+  @override
+  Future<Either<Failure, String>> uploadProfilePicture(File file) {
+    throw UnimplementedError();
+  }
+
+
 }
