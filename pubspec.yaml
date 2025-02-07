@@ -53,6 +53,7 @@ dependencies:
   image_picker: ^1.1.2
   permission_handler: ^11.3.1
   pretty_dio_logger: ^1.4.0
+  mocktail: ^1.0.4
 
 
 dev_dependencies:
