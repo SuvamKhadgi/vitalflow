@@ -9,20 +9,24 @@ class SignupUserParams extends Equatable {
   final String name;
   final String email;
   final String password;
+  final String? image;
 
   const SignupUserParams({
     required this.name,
     required this.email,
     required this.password,
+    this.image,
   });
 
   const SignupUserParams.initial({
     required this.email,
     required this.password,
     required this.name,
+    this.image,
+
   });
   @override
-  List<Object> get props => [email, password, name];
+  List<Object> get props => [email, password, name ];
 }
 
 class SignupUsecase implements UsecaseWithParams<void, SignupUserParams> {
@@ -35,6 +39,7 @@ class SignupUsecase implements UsecaseWithParams<void, SignupUserParams> {
       name: params.name,
       email: params.email,
       password: params.password,
+      image: params.image,
     );
     return repoitory.signupUser(authEntity);
   }

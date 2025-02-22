@@ -1,9 +1,16 @@
+import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vitalflow/app/shared_prefs/token_shared_prefs.dart';
+import 'package:vitalflow/core/network/api_service.dart';
 import 'package:vitalflow/core/network/hive_service.dart';
 import 'package:vitalflow/features/auth/data/data_source/local_datasource.dart/auth_local_datasource.dart';
+import 'package:vitalflow/features/auth/data/data_source/remote_data_source.dart/auth_remote_datasource.dart';
 import 'package:vitalflow/features/auth/data/repository/auth_local_repository/auth_local_repository.dart';
+import 'package:vitalflow/features/auth/data/repository/auth_remote_repository/auth_remote_repository.dart';
 import 'package:vitalflow/features/auth/domain/use_case/login_usecase.dart';
 import 'package:vitalflow/features/auth/domain/use_case/signup_usecase.dart';
+import 'package:vitalflow/features/auth/domain/use_case/upload_image_usecase.dart';
 import 'package:vitalflow/features/auth/presentation/view_model/login/login_bloc.dart';
 import 'package:vitalflow/features/auth/presentation/view_model/signup/signup_bloc.dart';
 import 'package:vitalflow/features/home/presentation/view_model/home_cubit.dart';
@@ -18,28 +25,56 @@ Future<void> initDependencies() async {
   await _initOnBoardingScreenDependencies();
   await _initLoginScreenDependencies();
   await _initHomeDependencies();
-
+  await _initSharedPreferences();
   await _initRegisterDependencies();
+  await _initApiService();
 }
 
 _initHiveService() {
   getIt.registerLazySingleton<HiveService>(() => HiveService());
 }
 
+Future<void> _initSharedPreferences() async {
+  final sharedPreferences = await SharedPreferences.getInstance();
+  getIt.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+}
+
+_initApiService() {
+  // Remote Data Source
+  getIt.registerLazySingleton<Dio>(
+    () => ApiService(Dio()).dio,
+  );
+}
+
 _initRegisterDependencies() {
-  // init local data source
+  // ==========data source================
   getIt.registerLazySingleton(
     () => AuthLocalDataSource(getIt<HiveService>()),
   );
-  // init local repository
+  getIt.registerLazySingleton<AuthRemoteDataSource>(
+    () => AuthRemoteDataSource(getIt<Dio>()),
+  );
+
+// ==========repository================
+
   getIt.registerLazySingleton(
     () => AuthLocalRepository(getIt<AuthLocalDataSource>()),
   );
+  getIt.registerLazySingleton<AuthRemoteRepository>(
+    () => AuthRemoteRepository(getIt<AuthRemoteDataSource>()),
+  );
 
-  // register use usecase
+// ==========usecase================
   getIt.registerLazySingleton<SignupUsecase>(
     () => SignupUsecase(
-      getIt<AuthLocalRepository>(),
+      // getIt<AuthLocalRepository>(),
+      getIt<AuthRemoteRepository>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<UploadImageUsecase>(
+    () => UploadImageUsecase(
+      getIt<AuthRemoteRepository>(),
     ),
   );
 
@@ -47,6 +82,7 @@ _initRegisterDependencies() {
         // batchBloc: getIt<BatchBloc>(),
         // courseBloc: getIt<CourseBloc>(),
         signupUseCase: getIt(),
+        uploadImageUsecase: getIt(),
         // loginBloc: getIt<LoginBloc>()
       ));
 }
@@ -70,8 +106,15 @@ _initOnBoardingScreenDependencies() async {
 }
 
 _initLoginScreenDependencies() async {
-  getIt.registerLazySingleton(() => LoginUseCase(
-        getIt<AuthLocalRepository>(),
+// =============tokrnSharedPrefs================
+  getIt.registerLazySingleton<TokenSharedPrefs>(
+    () => TokenSharedPrefs(getIt<SharedPreferences>()),
+  );
+
+  // ===============useCase================
+  getIt.registerLazySingleton<LoginUseCase>(() => LoginUseCase(
+        getIt<AuthRemoteRepository>(),
+        getIt<TokenSharedPrefs>(),
       ));
 
   getIt.registerFactory<LoginBloc>(

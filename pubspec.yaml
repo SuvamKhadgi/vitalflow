@@ -50,10 +50,12 @@ dependencies:
   adapters_flutter: ^2.1.9
   hive_flutter: ^1.1.0
   dio: ^5.8.0+1
+
   pretty_dio_logger: ^1.4.0
   json_annotation: ^4.9.0
   permission_handler: ^11.3.1
   image_picker: ^1.1.2
+
 
 dev_dependencies:
   flutter_test:

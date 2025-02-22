@@ -1,7 +1,5 @@
 part of 'signup_bloc.dart';
 
-// import 'package:equatable/equatable.dart';
-
 sealed class SignupEvent extends Equatable {
   const SignupEvent();
 
@@ -29,16 +27,26 @@ class NavigateHomeScreenEvent extends SignupEvent {
   });
 }
 
+class LoadImage extends SignupEvent {
+  final File file;
+
+  const LoadImage({
+    required this.file,
+  });
+}
+
 class SignupUser extends SignupEvent {
   final BuildContext context;
   final String email;
   final String password;
   final String name;
+  final String? image;
 
   const SignupUser({
     required this.context,
     required this.email,
     required this.password,
     required this.name,
+    this.image,
   });
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:vitalflow/core/network/hive_service.dart';
 import 'package:vitalflow/features/auth/data/data_source/auth_data_source.dart';
 import 'package:vitalflow/features/auth/data/model/auth_hive_model.dart';
@@ -40,5 +42,10 @@ class AuthLocalDataSource implements IAuthDataSource {
     } catch (e) {
       return Future.error(e);
     }
+  }
+
+  @override
+  Future<String> uploadProfilePicture(File file) {
+    throw UnimplementedError();
   }
 }
