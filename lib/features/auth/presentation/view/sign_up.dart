@@ -16,13 +16,9 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final _key = GlobalKey<FormState>();
-  final _gap = const SizedBox(height: 8);
 
-  // final _fnameController = TextEditingController(text: 'suvam');
   final _fnameController = TextEditingController();
-  // final _lnameController = TextEditingController(text: 'khadgi');
-  // final _phoneController = TextEditingController(text: '123456789');
-  // final _emailController = TextEditingController(text: 'suvam');
+
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -200,7 +196,7 @@ class _SignUpState extends State<SignUp> {
                       controller: _passwordController,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: Colors.white,
+                        fillColor: const Color.fromARGB(255, 255, 255, 255),
                         labelText: 'Password',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
@@ -218,7 +214,7 @@ class _SignUpState extends State<SignUp> {
                           ),
                     ),
                     //  const SizedBox(height: 16),
-                    _gap,
+                    const SizedBox(height: 16),
 
                     // Confirm Password Field
                     TextFormField(
@@ -242,7 +238,7 @@ class _SignUpState extends State<SignUp> {
                       onPressed: () {
                         if (_key.currentState!.validate()) {
                           final signupState = context.read<SignUpBloc>().state;
-                          final imageName=signupState.imageName;
+                          final imageName = signupState.imageName;
                           context.read<SignUpBloc>().add(
                                 SignupUser(
                                   context: context,
