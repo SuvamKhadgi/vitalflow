@@ -1,0 +1,2 @@
+C:/Users/LEGION/Desktop/vitalflow/vitalflow/android/app/.cxx/Debug/58512l4q/x86/CMakeFiles/edit_cache.dir
+C:/Users/LEGION/Desktop/vitalflow/vitalflow/android/app/.cxx/Debug/58512l4q/x86/CMakeFiles/rebuild_cache.dir

@@ -6,26 +6,13 @@ import 'package:vitalflow/features/auth/presentation/view_model/login/login_bloc
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
-  // void _showSuccessSnackbar(BuildContext context) {
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     const SnackBar(
-  //       content: Text('Login successfully!'),
-  //       backgroundColor: Colors.green,
-  //       duration: Duration(seconds: 2),
-  //     ),
-  //   );
-  // }
-
   final _formKey = GlobalKey<FormState>();
-  // final _emailController = TextEditingController(text: 'suvam');
   final _emailController = TextEditingController();
-  // final _passwordController = TextEditingController(text: 'suvam123');
   final _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    // final TextEditingController emailController = TextEditingController();
-    // final TextEditingController passwordController = TextEditingController();
+   
 
     return Scaffold(
       body: Container(

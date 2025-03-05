@@ -6,7 +6,7 @@ import 'package:vitalflow/features/auth/domain/entity/auth_entity.dart';
 
 part 'auth_hive_model.g.dart';
 
-@HiveType(typeId: HiveTableConstant.userTableId)
+@HiveType(typeId: 0)
 class AuthHiveModel extends Equatable {
   @HiveField(0)
   final String? usersId;

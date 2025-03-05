@@ -25,6 +25,8 @@ class AuthRemoteDataSource implements IAuthDataSource {
         },
       );
       if (response.statusCode == 200) {
+        print('Login response: ${response.data}'); // Debug full response
+      print('Saved token: ${response.data['token']}'); // D
         return response.data['token'];
       } else {
         throw Exception(response.statusMessage);
@@ -48,7 +50,7 @@ class AuthRemoteDataSource implements IAuthDataSource {
           "profile_picture": user.image,
         },
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         return;
       } else {
         throw Exception(response.statusMessage);
@@ -66,7 +68,7 @@ class AuthRemoteDataSource implements IAuthDataSource {
       String fileName = file.path.split('/').last;
       FormData formData = FormData.fromMap(
         {
-          'profilePicture': await MultipartFile.fromFile(
+          'image': await MultipartFile.fromFile(
             file.path,
             filename: fileName,
           ),
