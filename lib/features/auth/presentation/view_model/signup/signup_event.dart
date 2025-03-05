@@ -17,15 +17,15 @@ class NavigateloginScreenEvent extends SignupEvent {
   });
 }
 
-class NavigateHomeScreenEvent extends SignupEvent {
-  final BuildContext context;
-  final Widget destination;
+// class NavigateHomeScreenEvent extends SignupEvent {
+//   final BuildContext context;
+//   final Widget destination;
 
-  const NavigateHomeScreenEvent({
-    required this.context,
-    required this.destination,
-  });
-}
+//   const NavigateHomeScreenEvent({
+//     required this.context,
+//     required this.destination,
+//   });
+// }
 
 class LoadImage extends SignupEvent {
   final File file;
