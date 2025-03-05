@@ -1,190 +1,121 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vitalflow/core/common/snackbar/my_snackbar.dart';
-import 'package:vitalflow/features/home/presentation/view_model/home_cubit.dart';
+import 'package:flutter/services.dart';
+import 'dart:async';
+import 'package:vitalflow/app/di/di.dart';
+import 'package:vitalflow/app/my_app.dart';
+import 'package:vitalflow/features/home/presentation/view_model/home_bloc.dart';
 import 'package:vitalflow/features/home/presentation/view_model/home_state.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class HomeView extends StatefulWidget {
+  const HomeView({super.key});
 
-  // final TextEditingController _searchController = TextEditingController();
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  static const EventChannel _lightChannel = EventChannel('light_sensor');
+  late StreamSubscription _lightSubscription;
+  late ThemeCubit _themeCubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _themeCubit = context.read<ThemeCubit>();
+    _initLightSensor();
+  }
+
+  void _initLightSensor() {
+    _lightSubscription = _lightChannel.receiveBroadcastStream().listen(
+      (dynamic luxValue) {
+        double lightLevel = luxValue is int ? luxValue.toDouble() : luxValue as double;
+        if (lightLevel < 50 && !_themeCubit.state) {
+          print('Low light detected ($lightLevel lux), switching to dark mode');
+          _themeCubit.toggleTheme(); // Dark mode
+        } else if (lightLevel >= 50 && _themeCubit.state) {
+          print('Bright light detected ($lightLevel lux), switching to light mode');
+          _themeCubit.toggleTheme(); // Light mode
+        }
+      },
+      onError: (error) {
+        print('Error receiving light sensor data: $error');
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _lightSubscription.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              // Logout code
-              showMySnackBar(
-                context: context,
-                message: 'Logging out...',
-                color: Colors.red,
-              );
-
-              context.read<HomeCubit>().logout(context);
-            },
-          ),
-          // Switch(
-          //   value: _isDarkTheme,
-          //   onChanged: (value) {
-          //     // Change theme
-          //     // setState(() {
-          //     //   _isDarkTheme = value;
-          //     // });
-          //   },
-          // ),
-        ],
-      ),
-      body:
-          // SafeArea(
-          //   child: SizedBox(
-          //     height: double.infinity,
-
-          //     child: SingleChildScrollView(
-          //       child: Padding(
-          //         padding: const EdgeInsets.all(16.0),
-          //         child: Column(
-          //           crossAxisAlignment: CrossAxisAlignment.start,
-          //           children: <Widget>[
-          //             // Search Bar
-          //             Padding(
-          //               padding: const EdgeInsets.only(bottom: 16.0),
-          //               child: TextField(
-          //                 controller: _searchController,
-          //                 decoration: InputDecoration(
-          //                   hintText: 'Search...',
-          //                   prefixIcon: const Icon(Icons.search),
-          //                   filled: true,
-          //                   fillColor: Colors.white,
-          //                   border: OutlineInputBorder(
-          //                     borderRadius: BorderRadius.circular(30),
-          //                     borderSide: BorderSide.none,
-          //                   ),
-          //                 ),
-          //               ),
-          //             ),
-          //             // Welcome Message
-          //             const Text(
-          //               "Welcome, User!",
-          //               style: TextStyle(
-          //                 fontSize: 28,
-          //                 fontWeight: FontWeight.bold,
-          //                 color: Colors.white,
-          //               ),
-          //             ),
-          //             const SizedBox(height: 5),
-          //             const Text(
-          //               "Here's an overview of your activities:",
-          //               style: TextStyle(
-          //                 fontSize: 16,
-          //                 color: Colors.white70,
-          //               ),
-          //             ),
-          //             const SizedBox(height: 20),
-
-          //             // Card 1 (Full-width)
-          //             SizedBox(
-          //               width: double.infinity, // Ensures full width of screen
-          //               child: Card(
-          //                 elevation: 5,
-          //                 shape: RoundedRectangleBorder(
-          //                   borderRadius: BorderRadius.circular(15),
-          //                 ),
-          //                 child: const Padding(
-          //                   padding: EdgeInsets.all(16.0),
-          //                   child: Column(
-          //                     children: [
-          //                       Text(
-          //                         "Card",
-          //                         style: TextStyle(
-          //                           fontSize: 20,
-          //                           fontWeight: FontWeight.bold,
-          //                         ),
-          //                       ),
-          //                       SizedBox(height: 10),
-          //                       Text(
-          //                         "item 1",
-          //                         style: TextStyle(fontSize: 16),
-          //                       ),
-          //                     ],
-          //                   ),
-          //                 ),
-          //               ),
-          //             ),
-          //             const SizedBox(height: 20),
-
-          //             // Card 2 (Full-width)
-          //             SizedBox(
-          //               width: double.infinity, // Ensures full width of screen
-          //               child: Card(
-          //                 elevation: 5,
-          //                 shape: RoundedRectangleBorder(
-          //                   borderRadius: BorderRadius.circular(15),
-          //                 ),
-          //                 child: const Padding(
-          //                   padding: EdgeInsets.all(16.0),
-          //                   child: Column(
-          //                     children: [
-          //                       Text(
-          //                         "Card",
-          //                         style: TextStyle(
-          //                           fontSize: 20,
-          //                           fontWeight: FontWeight.bold,
-          //                         ),
-          //                       ),
-          //                       SizedBox(height: 10),
-          //                       Text(
-          //                         "item 2",
-          //                         style: TextStyle(fontSize: 16),
-          //                       ),
-          //                     ],
-          //                   ),
-          //                 ),
-          //               ),
-          //             ),
-          //             const SizedBox(height: 20),
-
-          //             // Add more cards or widgets as needed
-          //           ],
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          BlocBuilder<HomeCubit, HomeState>(builder: (context, state) {
-        return state.views.elementAt(state.selectedIndex);
-      }),
-      bottomNavigationBar: BlocBuilder<HomeCubit, HomeState>(
+    return BlocProvider(
+      create: (context) => getIt<HomeBloc>(),
+      child: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
-          return BottomNavigationBar(
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.dashboard),
-                label: 'Dashboard',
+          print('HomeView building: selectedIndex=${state.selectedIndex}, views=${state.views.length}');
+          if (state.views == null) {
+            print('Error: state.views is null');
+            return const Scaffold(body: Center(child: Text('Views not initialized')));
+          }
+          return Scaffold(
+            extendBody: true,
+            body: SafeArea(
+              top: true,
+              bottom: false,
+              child: state.views[state.selectedIndex],
+            ),
+            bottomNavigationBar: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
+                  ),
+                ],
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.book),
-                label: 'Product',
+              child: BottomNavigationBar(
+                items: [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.shopping_cart, size: state.selectedIndex == 0 ? 30 : 24),
+                    label: 'Cart',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: state.selectedIndex == 1 ? const Color(0xFF6200EE) : Colors.grey[200],
+                      ),
+                      child: Icon(
+                        Icons.home,
+                        size: 36,
+                        color: state.selectedIndex == 1 ? Colors.white : Colors.grey[600],
+                      ),
+                    ),
+                    label: 'Home',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.person, size: state.selectedIndex == 2 ? 30 : 24),
+                    label: 'Profile',
+                  ),
+                ],
+                currentIndex: state.selectedIndex,
+                selectedItemColor: const Color(0xFF6200EE),
+                unselectedItemColor: Colors.grey[600],
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                onTap: (index) => context.read<HomeBloc>().add(TabTapped(index)),
+                type: BottomNavigationBarType.fixed,
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.heart_broken),
-                label: 'Wishlist',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.account_circle),
-                label: 'Account',
-              ),
-            ],
-            currentIndex: state.selectedIndex,
-            selectedItemColor: Colors.white,
-            onTap: (index) {
-              context.read<HomeCubit>().onTabTapped(index);
-            },
+            ),
           );
         },
       ),
